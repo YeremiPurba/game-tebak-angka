@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tebak Angka</title>
+</head>
+<body>
+    <h1>=== GAME TEBAK ANGKA ===</h1>
+
+    <p>Selamat datang di Game Tebak Angka</p>
+    <p>Have Fun</p>
+
+    <!-- Form Tebakan -->
+    {% if not game_over %}
+        <form action="/guess" method="POST">
+            <label for="guess-number">Masukkan Tebakanmu: </label>
+            <input type="number" id="guess-number" name="guess_number" required>
+
+            <button type="submit">Tebak</button>
+        </form>
+    {% endif %}
+    
+    <p>Pesan hasil tebakan --- {{ message }}</p>
+    <p>Kesempatan tersisa --- {{ attempts }}</p>
+
+    <form action="/new-game" method="POST">
+        <button type="submit">Main Lagi</button>
+    </form>
+
+</body>
+</html>
