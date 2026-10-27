@@ -4,12 +4,13 @@ from flask import Flask, render_template, request, session, redirect, url_for
 app = Flask(__name__)
 app.secret_key = "kunci-rahasia aplikasi"
 
-# fungsi permainan baru
+# fungsi reset permainan baru
 def start_new_game():
     session["secret_number"] = random.randint(1,10)
     session["attempts"] = 5
     session["game_over"] = False
     session["won"] = False
+    session["game_started"] = True
 
 # routing new game
 @app.route("/new-game", methods=['POST'])
@@ -23,7 +24,8 @@ def new_game():
 def home():
     attempts = session.get("attempts", 0)
     game_over = session.get("game_over")
-    return render_template('index.html', attempts=attempts, game_over=game_over)
+    game_started = session.get("game_started", False)
+    return render_template('index.html', attempts=attempts, game_over=game_over, game_started=game_started)
 
 # routing form guess
 @app.route("/guess", methods=['POST'])
@@ -52,8 +54,9 @@ def guess():
 
     attempts = session["attempts"]
     game_over = session["game_over"]
+    game_started = session["game_started"]
 
-    return render_template("index.html", message=message, attempts=attempts, game_over=game_over)
+    return render_template("index.html", message=message, attempts=attempts, game_over=game_over, game_started=game_started)
 
 if __name__ == "__main__":
     app.run(debug=True)
