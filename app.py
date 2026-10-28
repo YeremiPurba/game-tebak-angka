@@ -47,8 +47,9 @@ def guess():
         session["game_over"] = True
         session["won"] = True
 
-    # memeriksa jik kesempatan habis
-    if session["attempts"] == 0:
+    # memeriksa jika kesempatan habis
+    if session["attempts"] == 0 and not session["won"]:
+        message = f"Kamu kalah! Angka rahasianya adalah {secret_number}"
         session["game_over"] = True
         session["won"] = False
 
