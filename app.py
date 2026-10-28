@@ -5,9 +5,20 @@ app = Flask(__name__)
 app.secret_key = "kunci-rahasia aplikasi"
 
 # fungsi reset permainan baru
-def start_new_game():
-    session["secret_number"] = random.randint(1,10)
-    session["attempts"] = 5
+def start_new_game(difficulty):
+    if difficulty == "easy":
+        max_num = 10
+        attempts = 5
+    elif difficulty == "medium":
+        max_num = 50
+        attempts = 7
+    elif difficulty == "hard":
+        max_num = 100
+        attempts = 5
+
+    session["max_num"] = max_num
+    session["secret_number"] = random.randint(1, max_num)
+    session["attempts"] = attempts
     session["game_over"] = False
     session["won"] = False
     session["game_started"] = True
@@ -15,7 +26,9 @@ def start_new_game():
 # routing new game
 @app.route("/new-game", methods=['POST'])
 def new_game():
-    start_new_game()
+    difficulty = request.form.get("difficulty")
+    start_new_game(difficulty)
+
     return redirect(url_for("home"))
 
 
@@ -24,10 +37,16 @@ def new_game():
 def home():
     # session.clear()
 
+    max_num = session.get("max_num")
     attempts = session.get("attempts", 0)
     game_over = session.get("game_over")
     game_started = session.get("game_started", False)
-    return render_template('index.html', attempts=attempts, game_over=game_over, game_started=game_started)
+    return render_template('index.html', attempts=attempts, game_over=game_over, game_started=game_started, max_num=max_num)
+
+@app.route("/choose-difficulty")
+def choose_difficulty():
+    session["game_started"] = False
+    return redirect(url_for("home"))
 
 # routing form guess
 @app.route("/guess", methods=['POST'])
@@ -61,8 +80,9 @@ def guess():
     attempts = session["attempts"]
     game_over = session["game_over"]
     game_started = session["game_started"]
+    max_num = session.get("max_num")
 
-    return render_template("index.html", message=message, attempts=attempts, game_over=game_over, game_started=game_started)
+    return render_template("index.html", message=message, attempts=attempts, game_over=game_over, game_started=game_started, max_num=max_num)
 
 if __name__ == "__main__":
     app.run(debug=True)
