@@ -22,6 +22,8 @@ def new_game():
 # routing homepage
 @app.route("/")
 def home():
+    # session.clear()
+
     attempts = session.get("attempts", 0)
     game_over = session.get("game_over")
     game_started = session.get("game_started", False)
@@ -30,6 +32,9 @@ def home():
 # routing form guess
 @app.route("/guess", methods=['POST'])
 def guess():
+    if not session.get("game_started", False):
+        return redirect(url_for("home"))
+
     # mengambil angka tebakan dari user
     guess_number = int(request.form.get("guess_number"))
     # mengambil angka rahasia dari session
@@ -47,7 +52,7 @@ def guess():
         session["game_over"] = True
         session["won"] = True
 
-    # memeriksa jika kesempatan habis
+    # kesempatan habis
     if session["attempts"] == 0 and not session["won"]:
         message = f"Kamu kalah! Angka rahasianya adalah {secret_number}"
         session["game_over"] = True
