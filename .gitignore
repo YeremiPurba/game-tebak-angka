@@ -9,9 +9,9 @@ venv/
 
 # Secrets
 .env
+.env.*
 
 # VSCode
 .vscode/
-
-# index.py
-index.py
+.DS_Store
+Thumbs.db

@@ -1,8 +1,11 @@
 import random
+import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for
 
+load_dotenv()
 app = Flask(__name__)
-app.secret_key = "kunci-rahasia aplikasi"
+app.secret_key = os.environ.get("SECRET_KEY")
 
 # fungsi reset permainan baru
 def start_new_game(difficulty):
@@ -81,8 +84,9 @@ def guess():
     game_over = session["game_over"]
     game_started = session["game_started"]
     max_num = session.get("max_num")
+    won = session.get("won")
 
-    return render_template("index.html", message=message, attempts=attempts, game_over=game_over, game_started=game_started, max_num=max_num)
+    return render_template("index.html", message=message, attempts=attempts, game_over=game_over, game_started=game_started, max_num=max_num, won=won)
 
 if __name__ == "__main__":
     app.run(debug=True)

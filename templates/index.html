@@ -3,53 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Game Tebak Angka</title>
 </head>
 <body>
+    <div class="game-card">
 
-    <!-- sebelum game dimulai -->
-    {% if not game_started %}
-        <h1>=== GAME TEBAK ANGKA ===</h1><br>
+        <!-- sebelum game dimulai -->
+        {% if not game_started %}
+            <span class="badge">🎲 Permainan Angka</span>
+            <h2>Tebak Angka</h2><br>
+            <p class="subtitle">Siap untuk bermain? Pilih tingkat kesulitanmu!</p>
 
-        <p>Siap untuk bermain?</p>
+            <!-- tombol mulai bermain -->
+            <form action="/new-game" method="POST">
+                <!-- level kesulitan -->
+                <select name="difficulty">
+                    <option value="easy">Mudah</option>
+                    <option value="medium">Sedang</option>
+                    <option value="hard">Susah</option>
+                </select>
 
-        <!-- tombol mulai bermain -->
-        <form action="/new-game" method="POST">
-            <!-- level kesulitan -->
-            <select name="difficulty">
-                <option value="easy">Mudah</option>
-                <option value="medium">Sedang</option>
-                <option value="hard">Susah</option>
-            </select>
+                <button type="submit">Mulai Bermain</button>
+            </form>
 
-            <button type="submit">Mulai Bermain</button>
-        </form>
+        <!-- setelah game berakhir -->
+        {% elif game_over %}
+            <h2>RONDE BERAKHIR</h2>
+            {% if won %}
+                <p class="game-message success">{{ message }}</p>
+            {% else %}
+                <p class="game-message error">{{ message }}</p>
+            {% endif %}
 
-    <!-- setelah game berakhir -->
-    {% elif game_over %}
-        <h2>RONDE BERAKHIR</h2>
-        <p>{{ message }}</p>
 
-        <!-- tombol main lagi -->
-        <form action="/choose-difficulty" method="GET">
-            <button type="submit">Main Lagi</button>
-        </form>
-    
-    <!-- saat game berlangsung -->
-    {% else %}
-        <h1>=== GAME TEBAK ANGKA ===</h1><br>
+            <!-- tombol main lagi -->
+            <form action="/choose-difficulty" method="GET">
+                <button type="submit">Main Lagi</button>
+            </form>
+        
+        <!-- saat game berlangsung -->
+        {% else %}
+            <h2>Tebak Angka</h2>
+            <p class="subtitle">Aku sedang memikirkan sebuah angka...</p>
 
-        <p>Tebak angka dari 1 sampai {{ max_num }}</p>
-        <p>Kesempatan tersisa --- {{ attempts }}</p>
-        <!-- formulir untuk menebak angka -->
-        <form action="/guess" method="POST">
-            <label for="guess-number">Masukkan Tebakanmu: </label>
-            <input type="number" id="guess-number" name="guess_number" min="1", max="{{ max_num }}" required>
+            <div class="range">Angka dari <b>1</b> sampai <b>{{ max_num }}</b></div>
 
-            <button type="submit">Tebak</button>
-        </form>
-        <p>Pesan hasil tebakan --- {{ message }}</p>
-    {% endif %}
+            {% set total = attempts %}
+            <div class="lives" aria-label="Kesempatan tersisa {{ attempts }}">
+                <span class="label">Kesempatan</span>
+                {% for i in range(total) %}
+                    <span class="heart {{ 'lost' if i >= attempts }}">❤️</span>
+                {% endfor %}
+            </div>
+
+            <!-- formulir untuk menebak angka -->
+            <form action="/guess" method="POST" class="guess-form">
+                <label for="guess-number">Masukkan Tebakanmu: </label>
+                <input type="number" id="guess-number" name="guess_number" min="1", max="{{ max_num }}" required>
+
+                <button type="submit">Tebak</button>
+            </form>
+
+            <div class="feedback {{ message_type | default('') }}" role="status">
+                {{ message if message else 'Ayo, masukkan tebakan pertamamu! 🤔' }}
+            </div>
+        {% endif %}
+    </div>
 
 </body>
 </html>
