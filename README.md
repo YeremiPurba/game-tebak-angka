@@ -92,6 +92,11 @@ Buka alamat berikut di browser:
 http://127.0.0.1:5000
 ```
 
+atau akses melalui link berikut:
+```text
+https://game-tebak-angka-virid.vercel.app/
+```
+
 ## Cara Bermain
 
 1. Pilih tingkat kesulitan.
