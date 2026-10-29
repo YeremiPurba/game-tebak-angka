@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for
 
 load_dotenv()
-app = Flask(__name__)
+app = Flask(__name__, static_folder="public", static_url_path="")
 app.secret_key = os.environ.get("SECRET_KEY")
 
 # fungsi reset permainan baru
